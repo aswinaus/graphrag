@@ -7,7 +7,7 @@ State Individual Income Tax has six Income ranges as per gov data. Each state is
 
  ![image](https://github.com/user-attachments/assets/3eb7ff32-a6a2-4f2c-9bb4-76de27426639)
 
- Extending the relation to zipcode and returns through STATE as relationship
+ Extending the relation to zipcode and Tax returns through STATE as relationship
 
 ![image](https://github.com/user-attachments/assets/1013cdda-575a-4ee4-8da8-8b8d0c3e7aae)
 
