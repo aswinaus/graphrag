@@ -11,9 +11,9 @@ State Individual Income Tax has six Income ranges as per gov data. Each state is
 
 ![image](https://github.com/user-attachments/assets/1013cdda-575a-4ee4-8da8-8b8d0c3e7aae)
 
-Adding the above Knowledge Graph to Neo4J
+Persisting the above Graph in Neo4J graph database for building question-answering system that uses Income Tax returns data stored as knowledge graph in Neo4j graph database
 
-Neo4J representation of Income Tax returns data by State.png
+https://github.com/aswinaus/graphrag/blob/main/Neo4J%20representation%20of%20Income%20Tax%20returns%20data%20by%20State.png
 
 
 
