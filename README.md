@@ -8,7 +8,7 @@ State Individual Income Tax has six Income ranges as per gov data. Each state is
 
 1. Define Use Case and Data
    •	Use Case:  Income Tax data
-   •	Data: Historical claims, customer profiles, policy details, disaster impact data, geographical data, social networks, weather patterns.
+   •	Data: Individual Tax filing data by state and zip code. Other data can be : Historical claims, customer profiles, policy details, disaster impact data, geographical data, social networks, weather patterns.
 3. Create and Populate Knowledge Graph
  •	Data Collection: Gather data from internal and external sources.
  •	Data Modeling: Define schema for entities and relationships.
