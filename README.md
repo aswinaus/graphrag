@@ -7,22 +7,22 @@ State Individual Income Tax has six Income ranges as per gov data. Each state is
 
 
 1. Define Use Case and Data
- •	Use Case:  Income Tax data
- •	Data: Historical claims, customer profiles, policy details, disaster impact data, geographical data, social networks, weather patterns.
-2. Create and Populate Knowledge Graph
+   •	Use Case:  Income Tax data
+   •	Data: Historical claims, customer profiles, policy details, disaster impact data, geographical data, social networks, weather patterns.
+3. Create and Populate Knowledge Graph
  •	Data Collection: Gather data from internal and external sources.
  •	Data Modeling: Define schema for entities and relationships.
  •	Data Ingestion: Load data into the knowledge graph.
-3. Index and Embed Data
+4. Index and Embed Data
  •	Document Indexing: Index relevant documents.
  •	Embedding Creation: Generate embeddings for entities and relationships.
-4. Set Up Retrieval Systems
+5. Set Up Retrieval Systems
  •	Document Retrieval: Implement system to retrieve documents from vector store.
  •	Graph Retrieval: Implement graph queries to extract relevant entities and relationships.
-5. Develop Ranking and Filtering Algorithms
+6. Develop Ranking and Filtering Algorithms
  •	Document Ranking: Rank and select top documents.
  •	Graph Ranking: Rank and filter graph data.
-6. Integrate with Language Model
+7. Integrate with Language Model
  •	Combine Data: Merge retrieved information from both sources.
  •	Response Generation: Use a language model to generate the final response.
 
