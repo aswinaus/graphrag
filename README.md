@@ -37,6 +37,18 @@ Pending
 •	Deployment: Deploy in production.
 •	Monitoring: Continuously monitor and improve.
 
+Knowledge Graph through networkx
+Code imagine each **STATE** as a circle (a node) and you want to connect it to another circle representing the number of tax returns filed in that state. This line of code draws that connection (an edge) between the 'STATE' node and the 'No of returns' node. It also labels the connection with 'Size of adjusted gross income' to indicate the relationship between them.
+
+Scenario:If the current row in the dataset has 'STATE' as 'CA' and 'No of returns' as 1000, this line would create an edge in the graph connecting a node labeled 'CA' to a node labeled '1000', and the edge would be labeled with 'Size of adjusted gross income'.
+
+Nodes: In a graph, nodes (sometimes called vertices) are the fundamental entities. In this code, nodes represent things like U.S. states, or categories like "Number of Returns" or "Size of adjusted gross income."
+
+Edges: Edges are the connections between nodes. They represent relationships. In this code, an edge connects a state node to a tax return statistic node, and the edge is labeled with a "Size of adjusted gross income" attribute.
+
+![image](https://github.com/user-attachments/assets/457961b5-18b6-4d42-8629-b61e2cbf6b7b)
+
+
 
  ![image](https://github.com/user-attachments/assets/3eb7ff32-a6a2-4f2c-9bb4-76de27426639)
 
