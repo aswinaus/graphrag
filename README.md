@@ -25,14 +25,15 @@ State Individual Income Tax has six Income ranges as per gov data. Each state is
 7. Integrate with Language Model
  •	Combine Data: Merge retrieved information from both sources.
  •	Response Generation: Use a language model to generate the final response.
+8. Testing and Validation
+•	Test Scenarios: Validate accuracy and relevance. - Evals
+•	User Feedback: Refine system based on feedback.
 
 Pending
 7. Develop User Interface
 •	Frontend: Create user-friendly interface.
 •	Backend: Ensure seamless communication between components.
-8. Testing and Validation
-•	Test Scenarios: Validate accuracy and relevance. - Evals
-•	User Feedback: Refine system based on feedback.
+
 9. Deployment and Monitoring
 •	Deployment: Deploy in production.
 •	Monitoring: Continuously monitor and improve.
@@ -49,6 +50,7 @@ Edges: Edges are the connections between nodes. They represent relationships. In
 ![image](https://github.com/user-attachments/assets/457961b5-18b6-4d42-8629-b61e2cbf6b7b)
 
 
+Neo4j GraphDB Implementation
 
  ![image](https://github.com/user-attachments/assets/3eb7ff32-a6a2-4f2c-9bb4-76de27426639)
 
