@@ -38,7 +38,8 @@ Pending
 •	Deployment: Deploy in production.
 •	Monitoring: Continuously monitor and improve.
 
-Knowledge Graph through networkx
+**Knowledge Graph through networkx**
+
 Code imagine each **STATE** as a circle (a node) and you want to connect it to another circle representing the number of tax returns filed in that state. This line of code draws that connection (an edge) between the 'STATE' node and the 'No of returns' node. It also labels the connection with 'Size of adjusted gross income' to indicate the relationship between them.
 
 Scenario:If the current row in the dataset has 'STATE' as 'CA' and 'No of returns' as 1000, this line would create an edge in the graph connecting a node labeled 'CA' to a node labeled '1000', and the edge would be labeled with 'Size of adjusted gross income'.
