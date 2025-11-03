@@ -3,7 +3,133 @@
 ## Overview
 This guide demonstrates how to use GraphFrames for distributed graph processing in Databricks. GraphFrames is a package for Apache Spark that provides DataFrame-based graphs, enabling scalable graph processing and analytics on large datasets.
 
-## Why GraphFrames for Graph RAG?
+**GraphFrames in Databricks**
+
+Code implements a scalable, distributed pipeline in Databricks (on Azure) to detect and classify document communities using semantic embeddings and graph-based clustering. Here is a concise breakdown of the main steps:
+
+**1.	Load and Prepare Documents:** Reads cleaned/parsed text documents from Azure Data Lake Storage (ADLS) into a Spark DataFrame, ensuring a consistent text column and filtering out empty entries.
+
+**2.	Embed Documents:** Uses the BAAI/bge-m3 transformer model to generate dense vector embeddings for each document. This is done in parallel across Spark partitions (using mapPartitions), with batching for efficiency and chunking to avoid truncation.
+
+**3.	Anchor Scoring:** For each document, computes cosine similarity scores to two "anchor" embeddings (representing "problem" and "solution" semantics) to quantify how much each document matches these concepts.
+
+**4.	KNN Graph Construction:** Builds a K-Nearest Neighbor (KNN) graph using MLlib's **LSH (Locality Sensitive Hashing)** to efficiently find approximate neighbors based on embedding similarity. Edges are filtered by cosine similarity and sparsified to keep only the top-K per node.
+
+**5.	Community Detection:** Uses GraphFrames' **Label Propagation Algorithm (LPA)** to detect communities (clusters) in the document graph.
+
+**6.	Community Classification:** Aggregates anchor scores within each community and heuristically labels each as "Problem", "Solution", "Both", or "Other" based on average scores.
+
+**7.	Result Output:** Joins community labels back to individual documents, adds per-document labels, and writes the results to ADLS in Delta and JSON formats (the latter for Azure AI Search ingestion).
+
+**8.	Display:** Shows a sample of the results in the Databricks notebook.
+This pipeline enables large-scale, unsupervised discovery and classification of document clusters by semantic similarity, supporting downstream search, analytics, or workflow automation.
+
+**Update strategy**
+
+There are two main options, depending on your scale and freshness requirements:
+
+Approach	Description	Suitable for
+**A. Incremental Graph Update (Preferred)**	Only compute embeddings and edges for new documents, then merge them into the existing graph. Re-run label propagation incrementally.	Continuous ingestion pipelines
+
+**B. Periodic Full Rebuild	Recompute** entire graph and communities on schedule (e.g., nightly).	Moderate scale, simpler ops, consistent global view
+
+                            **Option A — Incremental Graph Update Design**
+Production pattern that works in Databricks 
+
+**Step 1: Detect new documents**
+
+Auto Loader (Structured Streaming) detects new files in your raw ADLS container:
+
+df_stream = (spark.readStream.format("cloudFiles")
+             .option("cloudFiles.format", "binaryFile")
+             .load(PATH_RAW))
+We process only new arrivals → extract text, redact PII, and write to stage/text.
+
+**Step 2: Embed only new docs**
+
+Use your BAAI/bge-m3 inference logic, but only for new documents not already in the embeddings Delta table:
+df_existing = spark.read.format("delta").load(PATH_EMBEDDINGS)
+df_new = df_stage.join(df_existing, "path", "left_anti")
+Then embed only df_new.
+
+**Step 3: Compute edges only for new docs**
+
+•	Load the existing embeddings into memory (or a subset by vector index).
+•	For each new document embedding, find its top-k nearest neighbors from the existing pool (via LSH or approximate ANN).
+•	Generate new edges_new where cosine ≥ threshold.
+
+**Step 4: Merge graph incrementally**
+
+•	Append new vertices (docs) to your vertices Delta table.
+•	Append edges_new to your edges Delta table.
+•	Optionally prune edges with low scores periodically.
+df_vertices.write.format("delta").mode("append").save(PATH_GRAPH_VERTICES)
+df_edges.write.format("delta").mode("append").save(PATH_GRAPH_EDGES)
+
+**Step 5: Update communities (incremental LPA)**
+
+•	Load the latest graph from Delta:
+GraphFrame(vertices, edges)
+•	Re-run Label Propagation or Connected Components only on affected subgraphs (new nodes + their neighbors).
+•	Update the community assignments in your classified Delta table.
+
+**Option B — Periodic Full Rebuild**
+
+If incremental complexity is not critical (e.g., a nightly batch window),
+you can simply rerun the entire graph pipeline every night:
+1.	Re-embed all docs (or reuse cached embeddings if unchanged).
+2.	Recompute all edges via LSH.
+3.	Run label propagation on the full graph.
+4.	Overwrite community labels.
+
+This ensures global consistency but costs more compute.
+Maintaining graph state in Delta
+
+**Maintain three persistent Delta tables in ADLS:**
+Table	Purpose	Example Path
+Table Name : graph_vertices
+Example : All documents and their embedding metadata
+Path : abfss://classified@.../graph/vertices/
+
+Table Purpose : graph_edges
+Table Name : Semantic similarity edges (src, dst, cosine)
+Path : abfss://classified@.../graph/edges/
+
+Table Purpose : 
+graph_communities
+Table Name : Current community IDs and labels
+Path : abfss://classified@.../graph/communities/
+
+**Each new run reads, updates, and merges these tables atomically — Delta handles ACID updates, versioning, and rollback.**
+
+**Integrating with Azure AI Search**
+
+•	When new communities or document labels are computed, stream just those changes (new or updated docs) into Azure AI Search via JSON push.
+
+•	Use @search.action: "mergeOrUpload" to update existing records.
+[
+  {
+    "@search.action": "mergeOrUpload",
+    "id": "doc_987",
+    "community_id": 22,
+    "community_label": "Solution",
+    "problem_score": 0.87,
+    "solution_score": 0.90
+  }
+]
+
+That way Azure Search index stays in sync with your Delta-backed graph.
+
+**Overall process how it updates**
+1. Detect new docs	Auto Loader identifies new arrivals	Streaming input from ADLS
+2. Embed new docs	ADA-embedding-Large or BGE-M3 embeddings	Append to embeddings Delta
+3. Compute edges	KNN with cosine similarity	Append to edges Delta
+4. Merge graph	Update vertices + edges	Delta upsert
+5. Re-run community detection	Label Propagation on affected areas	Update communities Delta
+6. Push to Azure AI Search	JSON upsert for new docs	mergeOrUpload action
+
+
+## Why GraphFrames?
 
 GraphFrames offers several advantages for knowledge graph processing:
 - **Scalability**: Built on Apache Spark, it handles large-scale graphs efficiently
