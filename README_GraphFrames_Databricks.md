@@ -210,8 +210,8 @@ tax_data = spark.read.format("csv")\
 # Create vertices from unique states and metrics
 state_vertices = tax_data.select("STATE").distinct()\
     .withColumn("type", lit("State"))\
-    .withColumnRenamed("STATE", "id")\
-    .withColumnRenamed("STATE", "name")
+    .withColumn("name", col("STATE"))\
+    .withColumnRenamed("STATE", "id")
 
 # Create edges from relationships
 edges_from_data = tax_data.select(
@@ -529,7 +529,7 @@ g_uc = GraphFrame(vertices_uc, edges_uc)
 ## Resources
 
 - [GraphFrames Documentation](https://graphframes.github.io/graphframes/docs/_site/index.html)
-- [Databricks Graph Processing Guide](https://docs.databricks.com/en/machine-learning/graph-analysis.html)
+- [Databricks Graph Analysis Documentation](https://docs.databricks.com/en/index.html)
 - [Apache Spark GraphX Guide](https://spark.apache.org/docs/latest/graphx-programming-guide.html)
 - [Graph Algorithms with GraphFrames](https://databricks.com/blog/2016/03/03/introducing-graphframes.html)
 
