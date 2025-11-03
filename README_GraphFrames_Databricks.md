@@ -24,6 +24,10 @@ Code implements a scalable, distributed pipeline in Databricks (on Azure) to det
 **8.	Display:** Shows a sample of the results in the Databricks notebook.
 This pipeline enables large-scale, unsupervised discovery and classification of document clusters by semantic similarity, supporting downstream search, analytics, or workflow automation.
 
+**Sample JSON**
+<img width="607" height="608" alt="image" src="https://github.com/user-attachments/assets/2516e7b1-c562-4da2-a219-77459e3ef74f" />
+
+
 **Update strategy**
 
 There are two main options, depending on your scale and freshness requirements:
