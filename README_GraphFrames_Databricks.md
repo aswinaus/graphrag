@@ -93,17 +93,25 @@ Maintaining graph state in Delta
 
 **Maintain three persistent Delta tables in ADLS:**
 Table	Purpose	Example Path
+
 Table Name : graph_vertices
+
 Example : All documents and their embedding metadata
+
 Path : abfss://classified@.../graph/vertices/
 
 Table Purpose : graph_edges
+
 Table Name : Semantic similarity edges (src, dst, cosine)
+
 Path : abfss://classified@.../graph/edges/
+
 
 Table Purpose : 
 graph_communities
+
 Table Name : Current community IDs and labels
+
 Path : abfss://classified@.../graph/communities/
 
 **Each new run reads, updates, and merges these tables atomically — Delta handles ACID updates, versioning, and rollback.**
@@ -113,16 +121,8 @@ Path : abfss://classified@.../graph/communities/
 •	When new communities or document labels are computed, stream just those changes (new or updated docs) into Azure AI Search via JSON push.
 
 •	Use @search.action: "mergeOrUpload" to update existing records.
-[
-  {
-    "@search.action": "mergeOrUpload",
-    "id": "doc_987",
-    "community_id": 22,
-    "community_label": "Solution",
-    "problem_score": 0.87,
-    "solution_score": 0.90
-  }
-]
+
+<img width="597" height="616" alt="image" src="https://github.com/user-attachments/assets/aa1bf6f4-d3a4-4569-bb5f-237045cf0b40" />
 
 That way Azure Search index stays in sync with your Delta-backed graph.
 
