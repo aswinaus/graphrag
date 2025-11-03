@@ -70,10 +70,10 @@ vertices.display()
 ```python
 # Create edges DataFrame - represents relationships between entities
 edges = spark.createDataFrame([
-    ("CA", "returns_CA_1", "HAS_RETURNS", "income_range_1"),
-    ("NY", "returns_NY_1", "HAS_RETURNS", "income_range_2"),
-    ("TX", "returns_TX_1", "HAS_RETURNS", "income_range_1"),
-    ("FL", "returns_FL_1", "HAS_RETURNS", "income_range_3"),
+    ("CA", "returns_CA_1", "HAS_RETURNS", None),
+    ("NY", "returns_NY_1", "HAS_RETURNS", None),
+    ("TX", "returns_TX_1", "HAS_RETURNS", None),
+    ("FL", "returns_FL_1", "HAS_RETURNS", None),
     ("returns_CA_1", "income_range_1", "IN_RANGE", None),
     ("returns_NY_1", "income_range_2", "IN_RANGE", None),
     ("returns_TX_1", "income_range_1", "IN_RANGE", None),
@@ -122,15 +122,18 @@ tax_returns.display()
 has_returns_edges = g.edges.filter(col("relationship") == "HAS_RETURNS")
 has_returns_edges.display()
 
-# Join to get state names with their tax returns
+# Join to get state names with their tax returns and income ranges
 state_returns = (
     has_returns_edges
     .join(vertices.alias("state"), col("src") == col("state.id"))
     .join(vertices.alias("returns"), col("dst") == col("returns.id"))
+    .join(g.edges.filter(col("relationship") == "IN_RANGE").alias("range_edge"), 
+          col("dst") == col("range_edge.src"))
+    .join(vertices.alias("income"), col("range_edge.dst") == col("income.id"))
     .select(
         col("state.name").alias("State"),
         col("returns.name").alias("Number_of_Returns"),
-        col("attribute").alias("Income_Range")
+        col("income.name").alias("Income_Range")
     )
 )
 state_returns.display()
