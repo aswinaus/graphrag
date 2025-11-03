@@ -29,11 +29,13 @@ This pipeline enables large-scale, unsupervised discovery and classification of 
 There are two main options, depending on your scale and freshness requirements:
 
 Approach	Description	Suitable for
+
 **A. Incremental Graph Update (Preferred)**	Only compute embeddings and edges for new documents, then merge them into the existing graph. Re-run label propagation incrementally.	Continuous ingestion pipelines
 
 **B. Periodic Full Rebuild	Recompute** entire graph and communities on schedule (e.g., nightly).	Moderate scale, simpler ops, consistent global view
 
                             **Option A — Incremental Graph Update Design**
+                            
 Production pattern that works in Databricks 
 
 **Step 1: Detect new documents**
@@ -83,7 +85,8 @@ you can simply rerun the entire graph pipeline every night:
 4.	Overwrite community labels.
 
 This ensures global consistency but costs more compute.
-Maintaining graph state in Delta
+
+**Maintaining graph state in Delta**
 
 **Maintain three persistent Delta tables in ADLS:**
 Table	Purpose	Example Path
@@ -102,7 +105,7 @@ Path : abfss://classified@.../graph/communities/
 
 **Each new run reads, updates, and merges these tables atomically — Delta handles ACID updates, versioning, and rollback.**
 
-**Integrating with Azure AI Search**
+                                            **Integrating with Azure AI Search**
 
 •	When new communities or document labels are computed, stream just those changes (new or updated docs) into Azure AI Search via JSON push.
 
